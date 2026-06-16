@@ -1,4 +1,5 @@
 from cores import *
+from grafico import gerar_imagem
 
 
 def fechamento_lambda(estados, transicoes):
@@ -119,7 +120,7 @@ def executar_afnd(dados):
 
      if opcao == "1":
 
-        print("imagem")
+        gerar_imagem(dados, nome_arquivo="automato_afnd", tipo="AFND")
 
      elif opcao == "0":
 

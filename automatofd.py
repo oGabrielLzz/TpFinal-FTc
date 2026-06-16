@@ -1,4 +1,5 @@
 from cores import *
+from grafico import gerar_imagem
 
 def aceita_palavra(palavra, dados):
 
@@ -10,7 +11,7 @@ def aceita_palavra(palavra, dados):
 
         destino = dados["transicoes"][estado_atual][simbolo]
 
-       
+        # Suporte ao novo formato de leitura: destino pode ser lista (AFND) ou string (legado)
         if isinstance(destino, list):
             estado_atual = destino[0]
         else:
@@ -90,7 +91,7 @@ def executar_afd(dados):
 
      if opcao == "1":
 
-        print("imagem")
+        gerar_imagem(dados, nome_arquivo="automato_afd", tipo="AFD")
 
      elif opcao == "0":
 
