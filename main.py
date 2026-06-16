@@ -2,6 +2,7 @@ from leituraArq import ler_arquivo
 from interface import menu_principal, menu_extras
 
 from automatofd import executar_afd
+from automatoafnd import executar_afnd
 
 
 
@@ -25,8 +26,9 @@ def main():
 
                 if opcao_extra == "1":
 
-                    #fazer afn
-                     print("afn")
+                    dados = ler_arquivo("entrada_afnd.txt")
+                    executar_afnd(dados)
+
                 elif opcao_extra == "2":
 
                     #fazer ap

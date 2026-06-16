@@ -1,10 +1,17 @@
+import os
+
 def ler_arquivo(nome_arquivo):
 
-    with open(nome_arquivo, "r", encoding="utf-8") as arq:
+    # Resolve o caminho relativo à pasta deste arquivo, não ao diretório do terminal
+    pasta = os.path.dirname(os.path.abspath(__file__))
+    caminho = os.path.join(pasta, nome_arquivo)
+
+    with open(caminho, "r", encoding="utf-8") as arq:
         linhas = [linha.rstrip("\n") for linha in arq]
 
     estados = []
     estado_inicial = ""
+    estados_iniciais = []
     estados_finais = []
     transicoes = {}
     palavras_teste = []
@@ -17,7 +24,9 @@ def ler_arquivo(nome_arquivo):
             estados = linha[2:].strip().split()
 
         elif linha.startswith("I:"):
-            estado_inicial = linha[2:].strip()
+            # Suporte a múltiplos estados iniciais (AFND)
+            estados_iniciais = linha[2:].strip().split()
+            estado_inicial = estados_iniciais[0] if len(estados_iniciais) == 1 else estados_iniciais[0]
 
         elif linha.startswith("F:"):
             estados_finais = linha[2:].strip().split()
@@ -42,7 +51,16 @@ def ler_arquivo(nome_arquivo):
                     transicoes[origem] = {}
 
                 for simbolo in simbolos:
-                    transicoes[origem][simbolo] = destino
+
+                    # AFD: destino é string; AFND: destino é lista
+                    if simbolo not in transicoes[origem]:
+                        transicoes[origem][simbolo] = [destino]
+                    else:
+                        if isinstance(transicoes[origem][simbolo], list):
+                            if destino not in transicoes[origem][simbolo]:
+                                transicoes[origem][simbolo].append(destino)
+                        else:
+                            transicoes[origem][simbolo] = [transicoes[origem][simbolo], destino]
 
         else:
            
@@ -51,6 +69,7 @@ def ler_arquivo(nome_arquivo):
     return {
         "estados": estados,
         "estado_inicial": estado_inicial,
+        "estados_iniciais": estados_iniciais,
         "estados_finais": estados_finais,
         "transicoes": transicoes,
         "palavras_teste": palavras_teste

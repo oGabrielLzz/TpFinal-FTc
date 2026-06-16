@@ -1,34 +1,63 @@
 from cores import *
 
+
+def fechamento_lambda(estados, transicoes):
+    """Calcula o fechamento-λ (epsilon-closure) de um conjunto de estados."""
+
+    fechamento = set(estados)
+    pilha = list(estados)
+
+    while pilha:
+
+        estado = pilha.pop()
+
+        destinos = transicoes.get(estado, {}).get("\\", [])
+
+        for destino in destinos:
+
+            if destino not in fechamento:
+                fechamento.add(destino)
+                pilha.append(destino)
+
+    return fechamento
+
+
 def aceita_palavra(palavra, dados):
 
-    estado_atual = dados["estado_inicial"]
+    estados_iniciais = dados["estados_iniciais"]
+    transicoes = dados["transicoes"]
+    estados_finais = dados["estados_finais"]
 
-    caminho = [estado_atual]
+    estados_atuais = fechamento_lambda(estados_iniciais, transicoes)
+
+    caminho = ["{" + ", ".join(sorted(estados_atuais)) + "}"]
 
     for simbolo in palavra:
 
-        destino = dados["transicoes"][estado_atual][simbolo]
+        proximos_estados = set()
 
-       
-        if isinstance(destino, list):
-            estado_atual = destino[0]
-        else:
-            estado_atual = destino
+        for estado in estados_atuais:
 
-        caminho.append(estado_atual)
+            destinos = transicoes.get(estado, {}).get(simbolo, [])
 
-    aceita = estado_atual in dados["estados_finais"]
+            for destino in destinos:
+                proximos_estados.add(destino)
+
+        estados_atuais = fechamento_lambda(proximos_estados, transicoes)
+
+        caminho.append("{" + ", ".join(sorted(estados_atuais)) + "}")
+
+    aceita = any(estado in estados_finais for estado in estados_atuais)
 
     return aceita, caminho
 
 
-def executar_afd(dados):
+def executar_afnd(dados):
 
     print()
 
     print(SEPARADOR + "╔" + "═" * 58 + "╗")
-    print(TITULO + "║                     SIMULAÇÃO DO AFD                     ║")
+    print(TITULO + "║                     SIMULAÇÃO DO AFND                    ║")
     print(SEPARADOR + "╚" + "═" * 58 + "╝")
 
     print()
