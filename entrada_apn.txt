@@ -1,0 +1,21 @@
+Q: empilha desempilha
+G: 01
+I: empilha
+F: desempilha
+empilha -> empilha | 0,\/0 1,\/1
+empilha -> desempilha | \,\/\
+desempilha -> desempilha | 0,0/\ 1,1/\
+---
+λ
+0110
+1001
+1111
+0000
+010010
+101101
+11
+010
+110
+0111
+1010
+0101
