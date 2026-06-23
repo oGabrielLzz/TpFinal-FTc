@@ -41,8 +41,9 @@ def menu_tipo_predefinido():
  
     print(NEON_AZUL + "[1]" + NEON_BRANCO + " AFD (Autômato Finito Determinístico)")
     print(NEON_AZUL + "[2]" + NEON_BRANCO + " AFN (Autômato Finito Não Determinístico)")
-    print(NEON_AZUL + "[3]" + NEON_BRANCO + " Autômato de Pilha")
-    print(NEON_AZUL + "[4]" + NEON_BRANCO + " Máquina de Turing / ALL")
+    print(NEON_AZUL + "[3]" + NEON_BRANCO + " Autômato de Pilha Determinístico")
+    print(NEON_AZUL + "[4]" + NEON_BRANCO + " Autômato de Pilha Não Determinístico")
+    print(NEON_AZUL + "[5]" + NEON_BRANCO + " Máquina de Turing / ALL")
     print(NEON_AZUL + "[0]" + NEON_BRANCO + " Voltar")
  
     print()

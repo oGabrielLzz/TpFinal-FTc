@@ -4,7 +4,7 @@ from interface import menu_modo_entrada, menu_tipo_predefinido, pedir_nome_arqui
 from leituraArq import ler_arquivo, identificar_tipo
 from automatofd import executar_afd
 from automatoafnd import executar_afnd
-from automatoap import ler_arquivo_ap, executar_ap
+from automatoap import ler_arquivo_ap, executar_apn, executar_apd
 from automatomt import ler_arquivo_mt, executar_mt
 
 TIPOS = {
@@ -12,7 +12,8 @@ TIPOS = {
     "AFD": (ler_arquivo,    executar_afd),
     "AFN": (ler_arquivo,    executar_afnd),
     "AFND": (ler_arquivo,   executar_afnd),
-    "AP":  (ler_arquivo_ap, executar_ap),
+    "APD": (ler_arquivo_ap, executar_apd),
+    "APN":  (ler_arquivo_ap, executar_apn),
     "MT":  (ler_arquivo_mt, executar_mt),
     "ALL": (ler_arquivo_mt, executar_mt),
 }
@@ -20,8 +21,9 @@ TIPOS = {
 ARQUIVOS_PREDEFINIDOS = {
     "1": "entrada.txt",
     "2": "entrada_afnd.txt",
-    "3": "entrada_ap.txt",
-    "4": "entrada_mt.txt",
+    "3": "entrada_apd.txt",
+    "4": "entrada_apn.txt",
+    "5": "entrada_mt.txt",
 }
 
 def processar_arquivo(nome_arquivo):

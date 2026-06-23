@@ -1,4 +1,4 @@
-@AP
+@APN
 Q: igual dif
 G: ZU
 I: igual
