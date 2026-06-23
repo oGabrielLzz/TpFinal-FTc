@@ -1,5 +1,6 @@
 import os
 from grafico import gerar_imagem_mt
+from leituraArq import identificar_tipo
 
 try:
     from cores import *
@@ -25,17 +26,15 @@ def _linha_alfabeto(linha):
     return list(conteudo)
 
 
-def ler_arquivo_mt(nome_arquivo="entrada_mt.txt"):
+def ler_arquivo_mt(nome_arquivo):
+    tipo_automato = identificar_tipo(nome_arquivo) or "MT"
+
+    if tipo_automato not in {"MT", "ALL"}:
+        raise ValueError("Tipo inválido para máquina de Turing. Use @MT ou @ALL.")
+
+
     with open(_caminho_arquivo(nome_arquivo), "r", encoding="utf-8") as arq:
         linhas = [linha.rstrip("\n") for linha in arq]
-
-    modo = "MT"
-    pos = 0
-    if linhas and linhas[0].startswith("@"):
-        modo = linhas[0][1:].strip().upper()
-        pos = 1
-        if modo not in {"MT", "ALL"}:
-            raise ValueError("Tipo inválido para máquina de Turing. Use @MT ou @ALL.")
 
     estados = []
     alfabeto_entrada = ["0", "1"]
@@ -46,7 +45,7 @@ def ler_arquivo_mt(nome_arquivo="entrada_mt.txt"):
     palavras_teste = []
     lendo_palavras = False
 
-    for linha in linhas[pos:]:
+    for linha in linhas:
         if linha.startswith("Q:"):
             estados = linha[2:].strip().split()
         elif linha.startswith("S:"):
@@ -92,7 +91,7 @@ def ler_arquivo_mt(nome_arquivo="entrada_mt.txt"):
             raise ValueError("Os símbolos _, < e > são reservados e não podem aparecer em S: ou G:.")
 
     return {
-        "tipo": modo,
+        "tipo_automato": tipo_automato,
         "estados": estados,
         "alfabeto_entrada": alfabeto_entrada,
         "alfabeto_fita_extra": alfabeto_fita_extra,
@@ -141,7 +140,7 @@ def _conteudo_fita(fita, modo):
 
 
 def simular_palavra(palavra, dados, limite_passos=100000, limite_celulas=1000000, registrar_caminho=False):
-    modo = dados.get("tipo", "MT")
+    modo = dados.get("tipo_automato", "MT")
     estado = dados["estado_inicial"]
     finais = set(dados["estados_finais"])
     transicoes = dados["transicoes"]
@@ -181,7 +180,7 @@ def simular_palavra(palavra, dados, limite_passos=100000, limite_celulas=1000000
 
 
 def executar_mt(dados):
-    tipo = dados.get("tipo", "MT")
+    tipo = dados.get("tipo_automato", "MT")
     print()
     print(SEPARADOR + "╔" + "═" * 58 + "╗")
     print(TITULO + f"║ SIMULAÇÃO DA {tipo} ║")

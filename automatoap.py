@@ -1,6 +1,7 @@
 import os
 from collections import deque
 from grafico import gerar_imagem_ap
+from leituraArq import identificar_tipo
 
 try:
     from cores import *
@@ -14,7 +15,9 @@ def _caminho_arquivo(nome_arquivo):
     return os.path.join(pasta, nome_arquivo)
 
 
-def ler_arquivo_ap(nome_arquivo="entrada_ap.txt"):
+def ler_arquivo_ap(nome_arquivo):
+    tipo_automato = identificar_tipo(nome_arquivo)
+
     with open(_caminho_arquivo(nome_arquivo), "r", encoding="utf-8") as arq:
         linhas = [linha.rstrip("\n") for linha in arq]
 
@@ -70,6 +73,7 @@ def ler_arquivo_ap(nome_arquivo="entrada_ap.txt"):
             palavras_teste.append(linha_strip)
 
     return {
+        "tipo_automato": tipo_automato,
         "estados": estados,
         "alfabeto_pilha": alfabeto_pilha,
         "estado_inicial": estado_inicial,

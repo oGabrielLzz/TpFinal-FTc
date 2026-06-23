@@ -1,10 +1,28 @@
 import os
 
+def caminho_arquivo(nome_arquivo):
+    pasta = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(pasta, nome_arquivo)
+
+def identificar_tipo(nome_arquivo):
+    with open(caminho_arquivo(nome_arquivo), "r", encoding="utf-8") as arq:
+        primeira_linha = arq.readline().strip()
+ 
+    if not primeira_linha.startswith("@"):
+        return None
+ 
+    return primeira_linha[1:].strip().upper()
+
+
+
 def ler_arquivo(nome_arquivo):
 
     # Resolve o caminho relativo à pasta deste arquivo, não ao diretório do terminal
     pasta = os.path.dirname(os.path.abspath(__file__))
     caminho = os.path.join(pasta, nome_arquivo)
+    
+    #identificando tipo do automato
+    tipo_automato = identificar_tipo(nome_arquivo)
 
     with open(caminho, "r", encoding="utf-8") as arq:
         linhas = [linha.rstrip("\n") for linha in arq]
@@ -67,6 +85,7 @@ def ler_arquivo(nome_arquivo):
             palavras_teste.append(linha) #guardando linha vazia pra palavra vazia
 
     return {
+        "tipo_automato": tipo_automato,
         "estados": estados,
         "estado_inicial": estado_inicial,
         "estados_iniciais": estados_iniciais,
