@@ -1,0 +1,24 @@
+@APN
+Q: igual dif
+G: ZU
+I: igual
+F: igual
+igual -> dif | 0,\/ZF 1,\/UF
+dif -> igual | \,F/\
+dif -> dif | 0,Z/ZZ 1,Z/\
+dif -> dif | 0,U/\ 1,U/UU
+---
+01
+0011
+10
+1100
+0101
+000111
+0110
+001101
+010
+0100
+11100
+0
+1
+00000000000000000000

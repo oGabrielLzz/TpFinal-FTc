@@ -1,48 +1,85 @@
-from leituraArq import ler_arquivo
-from interface import menu_principal, menu_extras
-
-from automatomt import ler_arquivo_mt, executar_mt
+import os
+ 
+from interface import menu_modo_entrada, menu_tipo_predefinido, pedir_nome_arquivo
+from leituraArq import ler_arquivo, identificar_tipo
 from automatofd import executar_afd
 from automatoafnd import executar_afnd
+from automatoap import ler_arquivo_ap, executar_apn, executar_apd
+from automatomt import ler_arquivo_mt, executar_mt
 
+TIPOS = {
+    "AF":  (ler_arquivo,    executar_afd),
+    "AFD": (ler_arquivo,    executar_afd),
+    "AFN": (ler_arquivo,    executar_afnd),
+    "AFND": (ler_arquivo,   executar_afnd),
+    "APD": (ler_arquivo_ap, executar_apd),
+    "APN":  (ler_arquivo_ap, executar_apn),
+    "MT":  (ler_arquivo_mt, executar_mt),
+    "ALL": (ler_arquivo_mt, executar_mt),
+}
+
+ARQUIVOS_PREDEFINIDOS = {
+    "1": "entrada.txt",
+    "2": "entrada_afnd.txt",
+    "3": "entrada_apd.txt",
+    "4": "entrada_apn.txt",
+    "5": "entrada_mt.txt",
+}
+
+def processar_arquivo(nome_arquivo):
+    tipo = identificar_tipo(nome_arquivo)
+ 
+    if tipo is None:
+        print("\nO arquivo não possui a linha de cabeçalho @TIPO (ex.: @AF, @AFN, @AP, @MT, @ALL).\n")
+        return
+ 
+    if tipo not in TIPOS:
+        print(f"\nTipo de autômato não suportado: {tipo}\n")
+        return
+ 
+    leitor, executor = TIPOS[tipo]
+    dados = leitor(nome_arquivo)
+    executor(dados)
+
+def fluxo_predefinido():
+    while True:
+        opcao = menu_tipo_predefinido()
+ 
+        if opcao == "0":
+            break
+ 
+        if opcao in ARQUIVOS_PREDEFINIDOS:
+            nome_arquivo = ARQUIVOS_PREDEFINIDOS[opcao]
+            try:
+                processar_arquivo(nome_arquivo)
+            except FileNotFoundError:
+                print(f"\nArquivo '{nome_arquivo}' não encontrado na pasta do projeto.\n")
+        else:
+            print("\nOpção inválida.\n")
+
+def fluxo_arquivo_digitado():
+    nome_arquivo = pedir_nome_arquivo()
+ 
+    if not nome_arquivo:
+        print("\nNenhum nome de arquivo informado.\n")
+        return
+ 
+    try:
+        processar_arquivo(nome_arquivo)
+    except FileNotFoundError:
+        print(f"\nArquivo '{nome_arquivo}' não encontrado.\n")
 
 def main():
-
     while True:
-
-        opcao = menu_principal()
-
+        opcao = menu_modo_entrada()
+ 
         if opcao == "1":
-            dados = ler_arquivo("entrada.txt")
-            executar_afd(dados)
-
+            fluxo_predefinido() 
         elif opcao == "2":
-            while True:
-
-                opcao_extra = menu_extras()
-
-                if opcao_extra == "1":
-                    dados = ler_arquivo("entrada_afnd.txt")
-                    executar_afnd(dados)
-
-                elif opcao_extra == "2":
-                    #fazer ap
-                     print("ap")
-                    
-                elif opcao_extra == "3":
-                     dados = ler_arquivo_mt("entrada_mt.txt")
-                     executar_mt(dados)
-                   
-                elif opcao_extra == "0":
-                    break
-
-                else:
-                    print("\nOpção inválida.\n")
-
+            fluxo_arquivo_digitado() 
         elif opcao == "0":
             print("\nEncerrando programa...")
-            break
-
+            break 
         else:
             print("\nOpção inválida.\n")
 

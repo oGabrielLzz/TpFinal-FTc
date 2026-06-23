@@ -1,3 +1,4 @@
+@MT
 Q: q0 qf
 G: a
 I: q0
