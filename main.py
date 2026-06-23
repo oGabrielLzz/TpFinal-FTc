@@ -4,7 +4,7 @@ from interface import menu_principal, menu_extras
 from automatomt import ler_arquivo_mt, executar_mt
 from automatofd import executar_afd
 from automatoafnd import executar_afnd
-from automatoap import ler_arquivo_ap, executar_ap
+from automatoap import ler_arquivo_ap, executar_apn, executar_apd
 
 
 
@@ -28,10 +28,14 @@ def main():
                     executar_afnd(dados)
 
                 elif opcao_extra == "2":
-                    dados = ler_arquivo_ap("entrada_ap.txt")
-                    executar_ap(dados)
+                    dados = ler_arquivo_ap("entrada_apn.txt")
+                    executar_apn(dados)
                     
                 elif opcao_extra == "3":
+                    dados = ler_arquivo_ap("entrada_apd.txt")
+                    executar_apd(dados)
+                    
+                elif opcao_extra == "4":
                      dados = ler_arquivo_mt("entrada_mt.txt")
                      executar_mt(dados)
                    

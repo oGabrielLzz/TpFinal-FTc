@@ -83,7 +83,7 @@ def ler_arquivo_ap(nome_arquivo):
     }
 
 
-def simular_palavra(palavra, dados, limite_passos=10000):
+def simular_palavra_apn(palavra, dados, limite_passos=10000):
     estado_inicial = dados["estado_inicial"]
     transicoes = dados["transicoes"]
 
@@ -154,10 +154,10 @@ def simular_palavra(palavra, dados, limite_passos=10000):
     return False, melhor_caminho
 
 
-def executar_ap(dados):
+def executar_apn(dados):
     print()
     print(SEPARADOR + "╔" + "═" * 58 + "╗")
-    print(TITULO + "║                     SIMULAÇÃO DO AP                      ║")
+    print(TITULO + "║                    SIMULAÇÃO DO APN                      ║")
     print(SEPARADOR + "╚" + "═" * 58 + "╝")
     print()
 
@@ -165,7 +165,7 @@ def executar_ap(dados):
     rejeitadas = 0
 
     for palavra in dados["palavras_teste"]:
-        aceita, caminho = simular_palavra(palavra, dados)
+        aceita, caminho = simular_palavra_apn(palavra, dados)
         print(SEPARADOR + "─" * 60)
         if palavra == "":
             print(PALAVRA + "Palavra: λ (vazia)")
@@ -204,7 +204,148 @@ def executar_ap(dados):
         opcao = input(INFO + "Escolha uma opção: ").strip()
 
         if opcao == "1":
-            gerar_imagem_ap(dados, nome_arquivo="automato_ap", tipo="AP")
+            gerar_imagem_ap(dados, nome_arquivo="automato_apn", tipo="APN")
+        elif opcao == "0":
+            break
+        else:
+            print(ERRO + "\nOpção inválida!\n")
+
+
+def simular_palavra_apd(palavra, dados, limite_passos=10000):
+    estado_inicial = dados["estado_inicial"]
+    transicoes = dados["transicoes"]
+    estados_finais = dados["estados_finais"]
+
+    estado_atual = estado_inicial
+    pilha = ()
+    index = 0
+    caminho = [(estado_atual, list(pilha))]
+    visitados = set()
+
+    passos = 0
+    while passos < limite_passos:
+        passos += 1
+
+        # reconhecimento: palavra lida completamente e pilha vazia
+        if index == len(palavra) and len(pilha) == 0:
+            return True, caminho, None
+
+        # evitar loops infinitos de transições lambda
+        config = (estado_atual, pilha, index)
+        if config in visitados:
+            return False, caminho, "Loop infinito de transições lambda detectado."
+        visitados.add(config)
+
+        char = palavra[index] if index < len(palavra) else None
+        top = pilha[0] if len(pilha) > 0 else None
+
+        transicoes_estado = transicoes.get(estado_atual, [])
+        aplicaveis = []
+
+        for t in transicoes_estado:
+            # 1. entrada cond
+            if t["a"] == "\\":
+                cond_a = True
+            else:
+                cond_a = (char is not None and t["a"] == char)
+
+            # 2. pilha cond
+            if t["b"] == "\\":
+                cond_b = True
+            else:
+                cond_b = (top is not None and t["b"] == top)
+
+            if cond_a and cond_b:
+                aplicaveis.append(t)
+
+        if not aplicaveis:
+            break
+
+        # se houver mais de uma transição possivel, ha um conflito de nao-determinismo
+        if len(aplicaveis) > 1:
+            detalhe = ", ".join([f"({t['a']},{t['b']}/{t['z']} -> {t['destino']})" for t in aplicaveis])
+            return False, caminho, f"Conflito de não-determinismo (múltiplas transições aplicáveis): {detalhe}"
+
+        escolhida = aplicaveis[0]
+        destino = escolhida["destino"]
+        a = escolhida["a"]
+        b = escolhida["b"]
+        z = escolhida["z"]
+
+        # consome entrada se não for lambda
+        if a != "\\":
+            index += 1
+
+        # desempilha se não for lambda
+        if b != "\\":
+            pilha = pilha[1:]
+
+        # empilha se não for lambda
+        if z != "\\":
+            pilha = tuple(z) + pilha
+
+        estado_atual = destino
+        caminho.append((estado_atual, list(pilha)))
+
+    # verificao de aceitacao final
+    aceita = (index == len(palavra) and len(pilha) == 0)
+    return aceita, caminho, None
+
+
+def executar_apd(dados):
+    print()
+    print(SEPARADOR + "╔" + "═" * 58 + "╗")
+    print(TITULO + "║                     SIMULAÇÃO DO APD                     ║")
+    print(SEPARADOR + "╚" + "═" * 58 + "╝")
+    print()
+
+    aceitas = 0
+    rejeitadas = 0
+
+    for palavra in dados["palavras_teste"]:
+        aceita, caminho, erro_conflito = simular_palavra_apd(palavra, dados)
+        print(SEPARADOR + "─" * 60)
+        if palavra == "":
+            print(PALAVRA + "Palavra: λ (vazia)")
+        else:
+            print(PALAVRA + f"Palavra: {palavra}")
+
+        path_str = " -> ".join([f"{state}{stack}" for state, stack in caminho])
+        print(CAMINHO + "Caminho: " + path_str)
+
+        if erro_conflito:
+            print(ERRO + f"Resultado: X (Erro: {erro_conflito})")
+            rejeitadas += 1
+        elif aceita:
+            print(OK + "Resultado: OK")
+            aceitas += 1
+        else:
+            print(ERRO + "Resultado: X")
+            rejeitadas += 1
+        print()
+
+    print(SEPARADOR + "═" * 60)
+    print(ESTATISTICA + "ESTATÍSTICAS")
+    print(SEPARADOR + "═" * 60)
+    print(NEON_VERDE + f"Aceitas: {aceitas}")
+    print(NEON_VERMELHO + f"Rejeitadas: {rejeitadas}")
+    print(NEON_CIANO + f"Total: {aceitas + rejeitadas}")
+
+    if (aceitas + rejeitadas) > 0:
+        taxa = (aceitas / (aceitas + rejeitadas)) * 100
+        print(NEON_AMARELO + f"Taxa de aceitação: {taxa:.2f}%")
+    print()
+
+    while True:
+        print(SEPARADOR + "═" * 60)
+        print(DESTAQUE + "[1] Gerar imagem do autômato")
+        print(DESTAQUE + "[0] Voltar ao menu de extras")
+        print(SEPARADOR + "═" * 60)
+
+        opcao = input(INFO + "Escolha uma opção: ").strip()
+
+        if opcao == "1":
+            gerar_imagem_ap(dados, nome_arquivo="automato_apd", tipo="APD")
         elif opcao == "0":
             break
         else:

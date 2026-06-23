@@ -87,8 +87,9 @@ def menu_extras():
     print()
 
     print(NEON_AZUL + "[1]" + NEON_BRANCO+ " AFN (Autômato Finito Não Determinístico)")
-    print(NEON_AZUL + "[2]" + NEON_BRANCO + " Autômato de Pilha")
-    print(NEON_AZUL + "[3]" + NEON_BRANCO + " Máquina de Turing")
+    print(NEON_AZUL + "[2]" + NEON_BRANCO + " Autômato de Pilha Não Determinístico (APN)")
+    print(NEON_AZUL + "[3]" + NEON_BRANCO + " Autômato de Pilha Determinístico (APD)")
+    print(NEON_AZUL + "[4]" + NEON_BRANCO + " Máquina de Turing")
     print(NEON_AZUL + "[0]" + NEON_BRANCO + " Voltar")
 
     print()
