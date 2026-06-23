@@ -3,7 +3,7 @@ from grafico import gerar_imagem
 
 
 def fechamento_lambda(estados, transicoes):
-    """Calcula o fechamento-λ (epsilon-closure) de um conjunto de estados."""
+    #Calcula o fechamento-λ de um conjunto de estados.
 
     fechamento = set(estados)
     pilha = list(estados)
